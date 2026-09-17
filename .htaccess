@@ -1,0 +1,27 @@
+RewriteEngine On
+
+# Force trailing slash
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ /$1/ [L,R=301]
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+<FilesMatch "(database\.php|functions\.php|auth\.php)">
+    Require all denied
+</FilesMatch>
+
+# Deny access to sql and config directories
+RewriteRule ^sql/ - [F,L]
+RewriteRule ^config/ - [F,L]
+
+# Allow uploads directory
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^uploads/ - [L]
+
+# PHP settings
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 60
